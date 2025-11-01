@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios - WMS Sistema{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chart-container {
+        position: relative;
+        height: 300px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Relatórios e Análises</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <button type="button" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-download"></i> Exportar
+        </button>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-people"></i> Estatísticas de Usuários</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="userStatsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Estoque por Categoria</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="stockCategoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-graph-up"></i> Movimentações de Estoque (Últimos 7 dias)</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 400px;">
+                    <canvas id="stockMovementsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Atividades Recentes</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="activitiesTable">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Item</th>
+                                <th>Quantidade</th>
+                                <th>Data/Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+{% endblock %}

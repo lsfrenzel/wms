@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - WMS Sistema{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Dashboard</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <button type="button" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-calendar"></i> Hoje
+        </button>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">Total de Usuários</h6>
+                        <h2 class="mb-0">{{ stats.total_users }}</h2>
+                    </div>
+                    <i class="bi bi-people" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">Usuários Ativos</h6>
+                        <h2 class="mb-0">{{ stats.active_users }}</h2>
+                    </div>
+                    <i class="bi bi-person-check" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">Itens em Estoque</h6>
+                        <h2 class="mb-0">{{ stats.stock_items }}</h2>
+                    </div>
+                    <i class="bi bi-box-seam" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">Alertas</h6>
+                        <h2 class="mb-0">{{ stats.low_stock_alerts }}</h2>
+                    </div>
+                    <i class="bi bi-exclamation-triangle" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Atividades Recentes</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Data/Hora</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge bg-success">Entrada</span></td>
+                                <td>Recebimento de mercadorias - Lote #1234</td>
+                                <td>01/11/2024 10:30</td>
+                                <td><i class="bi bi-check-circle text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-danger">Saída</span></td>
+                                <td>Expedição - Pedido #5678</td>
+                                <td>01/11/2024 09:15</td>
+                                <td><i class="bi bi-check-circle text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-info">Ajuste</span></td>
+                                <td>Inventário - Setor A</td>
+                                <td>31/10/2024 16:45</td>
+                                <td><i class="bi bi-clock text-warning"></i></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-success">Entrada</span></td>
+                                <td>Recebimento de mercadorias - Lote #1235</td>
+                                <td>31/10/2024 14:20</td>
+                                <td><i class="bi bi-check-circle text-success"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Alertas do Sistema</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1"><i class="bi bi-exclamation-circle text-warning"></i> Estoque Baixo</h6>
+                            <small>2h atrás</small>
+                        </div>
+                        <p class="mb-1 small">8 itens com estoque abaixo do mínimo</p>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1"><i class="bi bi-info-circle text-info"></i> Novo Lote</h6>
+                            <small>5h atrás</small>
+                        </div>
+                        <p class="mb-1 small">Lote #1234 recebido e conferido</p>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1"><i class="bi bi-check-circle text-success"></i> Inventário</h6>
+                            <small>1d atrás</small>
+                        </div>
+                        <p class="mb-1 small">Inventário do Setor B concluído</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
