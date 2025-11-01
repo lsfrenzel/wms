@@ -16,9 +16,21 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Relatórios e Análises</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="{{ url_for('reports.export_csv') }}" class="btn btn-sm btn-outline-secondary">
-            <i class="bi bi-download"></i> Exportar CSV
-        </a>
+        <div class="btn-group me-2">
+            <a href="{{ url_for('reports.export_xlsx') }}" class="btn btn-sm btn-success">
+                <i class="bi bi-file-earmark-excel"></i> Exportar XLSX
+            </a>
+        </div>
+        <div class="btn-group me-2">
+            <a href="{{ url_for('reports.export_pdf') }}" class="btn btn-sm btn-danger">
+                <i class="bi bi-file-earmark-pdf"></i> Exportar Gráficos PDF
+            </a>
+        </div>
+        <div class="btn-group">
+            <a href="{{ url_for('reports.export_csv') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-filetype-csv"></i> Exportar CSV
+            </a>
+        </div>
     </div>
 </div>
 
