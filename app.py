@@ -1,8 +1,8 @@
 import os
 from flask import Flask
 from flask_login import LoginManager
-from models import db, User
-from routes import auth_bp, admin_bp, reports_bp
+from models import db, User, Product
+from routes import auth_bp, admin_bp, reports_bp, stock_bp, movements_bp, shipping_bp
 
 app = Flask(__name__)
 
@@ -25,13 +25,16 @@ def load_user(user_id):
 app.register_blueprint(auth_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(reports_bp)
+app.register_blueprint(stock_bp)
+app.register_blueprint(movements_bp)
+app.register_blueprint(shipping_bp)
 
 def init_database():
     with app.app_context():
         db.create_all()
         
         if User.query.count() == 0:
-            print("Criando usuário administrador padrão...")
+            print("Criando usuários padrão...")
             admin = User(
                 username='admin',
                 email='admin@wms.com',
@@ -54,6 +57,20 @@ def init_database():
             print("Usuários criados com sucesso!")
             print("Admin - Usuário: admin, Senha: admin123")
             print("User - Usuário: user, Senha: user123")
+        
+        if Product.query.count() == 0:
+            print("Criando produtos de exemplo...")
+            products = [
+                Product(code='PROD001', name='Notebook Dell XPS 15', category='Eletrônicos', unit='UN', quantity=25, min_quantity=5, location='A1-01'),
+                Product(code='PROD002', name='Mouse Logitech MX Master', category='Eletrônicos', unit='UN', quantity=50, min_quantity=10, location='A1-02'),
+                Product(code='PROD003', name='Teclado Mecânico RGB', category='Eletrônicos', unit='UN', quantity=30, min_quantity=8, location='A1-03'),
+                Product(code='PROD004', name='Monitor LG 27"', category='Eletrônicos', unit='UN', quantity=15, min_quantity=5, location='A2-01'),
+                Product(code='PROD005', name='Webcam Logitech C920', category='Eletrônicos', unit='UN', quantity=20, min_quantity=5, location='A2-02'),
+            ]
+            for product in products:
+                db.session.add(product)
+            db.session.commit()
+            print("Produtos criados com sucesso!")
 
 if __name__ == '__main__':
     init_database()

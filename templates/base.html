@@ -65,17 +65,17 @@
                     </h6>
                     <ul class="nav flex-column mb-2">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link {% if 'stock' in request.endpoint %}active{% endif %}" href="{{ url_for('stock.index') }}">
                                 <i class="bi bi-box"></i> Estoque
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link {% if 'movements' in request.endpoint %}active{% endif %}" href="{{ url_for('movements.index') }}">
                                 <i class="bi bi-arrow-left-right"></i> Movimentações
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link {% if 'shipping' in request.endpoint %}active{% endif %}" href="{{ url_for('shipping.index') }}">
                                 <i class="bi bi-truck"></i> Expedição
                             </a>
                         </li>

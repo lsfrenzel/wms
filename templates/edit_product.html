@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Produto - WMS Sistema{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Editar Produto</h1>
+    <a href="{{ url_for('stock.index') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('stock.edit_product', product_id=product.id) }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="code" class="form-label">Código</label>
+                                <input type="text" class="form-control" id="code" name="code" value="{{ product.code }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Nome do Produto</label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{ product.description }}</textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Categoria</label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="Eletrônicos" {% if product.category == 'Eletrônicos' %}selected{% endif %}>Eletrônicos</option>
+                                    <option value="Roupas" {% if product.category == 'Roupas' %}selected{% endif %}>Roupas</option>
+                                    <option value="Alimentos" {% if product.category == 'Alimentos' %}selected{% endif %}>Alimentos</option>
+                                    <option value="Móveis" {% if product.category == 'Móveis' %}selected{% endif %}>Móveis</option>
+                                    <option value="Ferramentas" {% if product.category == 'Ferramentas' %}selected{% endif %}>Ferramentas</option>
+                                    <option value="Outros" {% if product.category == 'Outros' %}selected{% endif %}>Outros</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="unit" class="form-label">Unidade</label>
+                                <select class="form-select" id="unit" name="unit">
+                                    <option value="UN" {% if product.unit == 'UN' %}selected{% endif %}>Unidade (UN)</option>
+                                    <option value="CX" {% if product.unit == 'CX' %}selected{% endif %}>Caixa (CX)</option>
+                                    <option value="KG" {% if product.unit == 'KG' %}selected{% endif %}>Quilograma (KG)</option>
+                                    <option value="L" {% if product.unit == 'L' %}selected{% endif %}>Litro (L)</option>
+                                    <option value="M" {% if product.unit == 'M' %}selected{% endif %}>Metro (M)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="location" class="form-label">Localização</label>
+                                <input type="text" class="form-control" id="location" name="location" value="{{ product.location }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Quantidade</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" value="{{ product.quantity }}" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="min_quantity" class="form-label">Estoque Mínimo</label>
+                                <input type="number" class="form-control" id="min_quantity" name="min_quantity" value="{{ product.min_quantity }}" min="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Salvar Alterações
+                        </button>
+                        <a href="{{ url_for('stock.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Informações do Produto</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Código:</strong> {{ product.code }}</p>
+                <p><strong>Criado em:</strong> {{ product.created_at.strftime('%d/%m/%Y') if product.created_at else 'N/A' }}</p>
+                <p><strong>Atualizado em:</strong> {{ product.updated_at.strftime('%d/%m/%Y') if product.updated_at else 'N/A' }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

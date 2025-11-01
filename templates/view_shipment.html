@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Expedição {{ shipment.order_number }} - WMS Sistema{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Expedição #{{ shipment.order_number }}</h1>
+    <a href="{{ url_for('shipping.index') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Informações do Pedido</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Número:</strong> {{ shipment.order_number }}</p>
+                        <p><strong>Cliente:</strong> {{ shipment.customer_name }}</p>
+                        <p><strong>Criado em:</strong> {{ shipment.created_at.strftime('%d/%m/%Y %H:%M') if shipment.created_at else 'N/A' }}</p>
+                        {% if shipment.shipped_at %}
+                        <p><strong>Expedido em:</strong> {{ shipment.shipped_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Status:</strong>
+                            {% if shipment.status == 'pending' %}
+                                <span class="badge bg-warning">Pendente</span>
+                            {% elif shipment.status == 'in_progress' %}
+                                <span class="badge bg-info">Em Andamento</span>
+                            {% elif shipment.status == 'shipped' %}
+                                <span class="badge bg-success">Expedido</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>Usuário:</strong> {{ shipment.user.name }}</p>
+                    </div>
+                </div>
+                <p><strong>Endereço:</strong> {{ shipment.customer_address }}</p>
+                {% if shipment.notes %}
+                <p><strong>Observações:</strong> {{ shipment.notes }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Atualizar Status</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('shipping.update_status', shipment_id=shipment.id) }}">
+                    <div class="mb-3">
+                        <select class="form-select" name="status">
+                            <option value="pending" {% if shipment.status == 'pending' %}selected{% endif %}>Pendente</option>
+                            <option value="in_progress" {% if shipment.status == 'in_progress' %}selected{% endif %}>Em Andamento</option>
+                            <option value="shipped" {% if shipment.status == 'shipped' %}selected{% endif %}>Expedido</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Atualizar Status</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Itens da Expedição</h5>
+        {% if shipment.status != 'shipped' %}
+        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+            <i class="bi bi-plus"></i> Adicionar Item
+        </button>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in shipment.items %}
+                    <tr>
+                        <td>{{ item.product.code }}</td>
+                        <td>{{ item.product.name }}</td>
+                        <td><strong>{{ item.quantity }}</strong> {{ item.product.unit }}</td>
+                        <td>
+                            {% if shipment.status != 'shipped' %}
+                            <form method="POST" action="{{ url_for('shipping.remove_item', item_id=item.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Remover este item?')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addItemModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('shipping.add_item', shipment_id=shipment.id) }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="product_id" class="form-label">Produto</label>
+                        <select class="form-select" id="product_id" name="product_id" required>
+                            <option value="">Selecione...</option>
+                            {% for product in products %}
+                            <option value="{{ product.id }}">{{ product.code }} - {{ product.name }} (Estoque: {{ product.quantity }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantidade</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Adicionar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

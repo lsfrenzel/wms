@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Movimentações - WMS Sistema{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Movimentações de Estoque</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMovementModal">
+        <i class="bi bi-plus-circle"></i> Nova Movimentação
+    </button>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">Entradas Hoje</h6>
+                        <h2 class="mb-0">{{ stats.entries_today }}</h2>
+                    </div>
+                    <i class="bi bi-arrow-down-circle" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">Saídas Hoje</h6>
+                        <h2 class="mb-0">{{ stats.exits_today }}</h2>
+                    </div>
+                    <i class="bi bi-arrow-up-circle" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">Ajustes Hoje</h6>
+                        <h2 class="mb-0">{{ stats.adjustments_today }}</h2>
+                    </div>
+                    <i class="bi bi-arrows-move" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">Total</h6>
+                        <h2 class="mb-0">{{ stats.total_movements }}</h2>
+                    </div>
+                    <i class="bi bi-list-check" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Tipo</th>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Usuário</th>
+                        <th>Observações</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for movement in movements %}
+                    <tr>
+                        <td>{{ movement.created_at.strftime('%d/%m/%Y %H:%M') if movement.created_at else 'N/A' }}</td>
+                        <td>
+                            {% if movement.type == 'entrada' %}
+                                <span class="badge bg-success">Entrada</span>
+                            {% elif movement.type == 'saida' %}
+                                <span class="badge bg-danger">Saída</span>
+                            {% else %}
+                                <span class="badge bg-warning">Ajuste</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ movement.product.name }}</td>
+                        <td><strong>{{ movement.quantity }}</strong></td>
+                        <td>{{ movement.user.name }}</td>
+                        <td>{{ movement.notes or '-' }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('movements.delete_movement', movement_id=movement.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir esta movimentação?')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addMovementModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nova Movimentação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('movements.add_movement') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="product_id" class="form-label">Produto</label>
+                        <select class="form-select" id="product_id" name="product_id" required>
+                            <option value="">Selecione um produto...</option>
+                            {% for product in products %}
+                            <option value="{{ product.id }}">{{ product.code }} - {{ product.name }} (Estoque: {{ product.quantity }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Tipo de Movimentação</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="entrada">Entrada</option>
+                            <option value="saida">Saída</option>
+                            <option value="ajuste">Ajuste de Inventário</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantidade</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+                        <small class="text-muted" id="quantityHelp"></small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Registrar Movimentação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('type').addEventListener('change', function() {
+    const helpText = document.getElementById('quantityHelp');
+    if (this.value === 'ajuste') {
+        helpText.textContent = 'Para ajuste, informe a quantidade FINAL desejada no estoque';
+    } else if (this.value === 'entrada') {
+        helpText.textContent = 'Quantidade que será ADICIONADA ao estoque';
+    } else {
+        helpText.textContent = 'Quantidade que será RETIRADA do estoque';
+    }
+});
+</script>
+{% endblock %}

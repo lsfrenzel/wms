@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Estoque - WMS Sistema{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Gerenciamento de Estoque</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+        <i class="bi bi-plus-circle"></i> Novo Produto
+    </button>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">Total de Produtos</h6>
+                        <h2 class="mb-0">{{ stats.total_products }}</h2>
+                    </div>
+                    <i class="bi bi-box-seam" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">Total de Itens</h6>
+                        <h2 class="mb-0">{{ stats.total_items }}</h2>
+                    </div>
+                    <i class="bi bi-boxes" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">Estoque Baixo</h6>
+                        <h2 class="mb-0">{{ stats.low_stock }}</h2>
+                    </div>
+                    <i class="bi bi-exclamation-triangle" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Produto</th>
+                        <th>Categoria</th>
+                        <th>Localização</th>
+                        <th>Quantidade</th>
+                        <th>Estoque Mínimo</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td><strong>{{ product.code }}</strong></td>
+                        <td>{{ product.name }}</td>
+                        <td><span class="badge bg-secondary">{{ product.category }}</span></td>
+                        <td>{{ product.location }}</td>
+                        <td><strong>{{ product.quantity }}</strong> {{ product.unit }}</td>
+                        <td>{{ product.min_quantity }}</td>
+                        <td>
+                            {% if product.quantity <= product.min_quantity %}
+                                <span class="badge bg-danger">Baixo</span>
+                            {% elif product.quantity <= product.min_quantity * 2 %}
+                                <span class="badge bg-warning">Médio</span>
+                            {% else %}
+                                <span class="badge bg-success">OK</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('stock.edit_product', product_id=product.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('stock.delete_product', product_id=product.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addProductModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Novo Produto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('stock.add_product') }}">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="code" class="form-label">Código</label>
+                                <input type="text" class="form-control" id="code" name="code" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Nome do Produto</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="description" name="description" rows="2"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Categoria</label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="Eletrônicos">Eletrônicos</option>
+                                    <option value="Roupas">Roupas</option>
+                                    <option value="Alimentos">Alimentos</option>
+                                    <option value="Móveis">Móveis</option>
+                                    <option value="Ferramentas">Ferramentas</option>
+                                    <option value="Outros">Outros</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="unit" class="form-label">Unidade</label>
+                                <select class="form-select" id="unit" name="unit">
+                                    <option value="UN">Unidade (UN)</option>
+                                    <option value="CX">Caixa (CX)</option>
+                                    <option value="KG">Quilograma (KG)</option>
+                                    <option value="L">Litro (L)</option>
+                                    <option value="M">Metro (M)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="location" class="form-label">Localização</label>
+                                <input type="text" class="form-control" id="location" name="location" placeholder="Ex: A1-01">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Quantidade Inicial</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" value="0" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="min_quantity" class="form-label">Estoque Mínimo</label>
+                                <input type="number" class="form-control" id="min_quantity" name="min_quantity" value="10" min="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Adicionar Produto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
