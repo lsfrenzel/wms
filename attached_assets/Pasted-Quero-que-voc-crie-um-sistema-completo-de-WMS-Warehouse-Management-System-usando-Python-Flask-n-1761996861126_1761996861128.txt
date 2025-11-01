@@ -1,0 +1,54 @@
+Quero que você crie um sistema completo de WMS (Warehouse Management System) usando Python (Flask) no backend e HTML/CSS/JavaScript com Bootstrap no frontend.
+
+### REQUISITOS GERAIS
+- O sistema deve ter uma tela inicial de LOGIN.
+- O login deve autenticar usuários com base em nome de usuário e senha salvos no banco de dados.
+- Após o login, o usuário é redirecionado para um painel (dashboard).
+- O painel administrativo deve permitir:
+  - Cadastro de novos usuários (nome, email, senha, cargo).
+  - Edição e exclusão de usuários existentes.
+  - Criação e visualização de relatórios (ex: movimentações de estoque, usuários ativos, etc.).
+  - Menu lateral fixo com navegação entre seções.
+- Os dados devem ser salvos em um banco de dados SQLite.
+
+### ESTRUTURA DO PROJETO
+- `app.py` — aplicação Flask principal
+- `templates/` — HTML (usando Bootstrap)
+- `static/` — CSS e JS personalizados
+- `models.py` — definição do banco de dados com SQLAlchemy
+- `routes/` — rotas separadas (auth, admin, reports, etc.)
+- `database.db` — banco SQLite
+
+### FUNCIONALIDADES DETALHADAS
+1. **Login**
+   - Tela simples com campos de “Usuário” e “Senha”.
+   - Redireciona para `/dashboard` ao logar com sucesso.
+   - Exibir mensagem de erro se o login falhar.
+   - Sessão de usuário com `Flask-Login`.
+
+2. **Painel Administrativo**
+   - Página `/admin` protegida por login e restrita a administradores.
+   - Listagem de usuários em tabela.
+   - Botões para “Editar” e “Excluir”.
+   - Formulário para criar novo usuário.
+   - Rotas: `/admin/add_user`, `/admin/delete_user/<id>`, `/admin/edit_user/<id>`.
+
+3. **Relatórios**
+   - Página `/reports` com gráficos simples (pode usar Chart.js).
+   - Relatórios simulados de movimentação de estoque e usuários ativos.
+
+4. **Design**
+   - Usar Bootstrap 5.
+   - Navbar no topo com botão de logout.
+   - Sidebar com navegação: Dashboard, Usuários, Relatórios.
+
+5. **Segurança**
+   - Senhas devem ser salvas com hash (usar `werkzeug.security`).
+   - Sessões seguras com `Flask-Login`.
+   - Somente administradores podem acessar o painel de usuários.
+
+6. **Execução**
+   - Ao rodar `python app.py`, o sistema deve criar o banco e iniciar o servidor local.
+   - Página inicial deve ser o login.
+
+Crie todos os arquivos necessários e inclua exemplos de templates HTML e CSS para que o projeto rode completo imediatamente.
